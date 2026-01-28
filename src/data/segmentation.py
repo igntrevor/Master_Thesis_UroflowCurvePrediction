@@ -40,3 +40,40 @@ def segment_dataset(raw_path, processed_path, time_ms, devices):
     raise NotImplementedError(
         "CSV aggregation implemented, audio segmentation pending."
     )
+
+import numpy as np
+import librosa
+
+def _segment_audio_waveform(
+    audio_path,
+    rows_per_segment,
+    duration_seconds
+):
+    """
+    Segment an audio file into equal-length chunks aligned
+    with aggregated CSV rows.
+
+    Extracted verbatim from Notebook 1 logic.
+    No file writing is performed here.
+    """
+
+    # Load audio at native sampling rate
+    wav, sr = librosa.load(audio_path, sr=None)
+
+    # Trim audio to match CSV duration
+    wav = wav[: int(duration_seconds * sr)]
+
+    # Compute segmentation boundaries (Notebook 1 logic)
+    cut_points = np.linspace(
+        0,
+        len(wav),
+        int(len(wav) / (rows_per_segment * (sr / 10))) + 1
+    )
+
+    segments = []
+    for i in range(len(cut_points) - 1):
+        start = int(cut_points[i])
+        end = int(cut_points[i + 1])
+        segments.append(wav[start:end])
+
+    return segments, sr
