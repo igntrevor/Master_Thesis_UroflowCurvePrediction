@@ -1,0 +1,5 @@
+# Frequency Sweep Config
+combinations:
+  - [0, 96000, 20]
+  - [250, 96000, 20]
+  - [1200, 96000, 20]
